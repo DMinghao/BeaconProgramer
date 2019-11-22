@@ -1,0 +1,5 @@
+museumapp\beaconprogramer\Database.class
+museumapp\beaconprogramer\Exhibit.class
+museumapp\beaconprogramer\SyncPipe.class
+museumapp\beaconprogramer\ProgramerMain.class
+museumapp\beaconprogramer\Bluetooth.class
