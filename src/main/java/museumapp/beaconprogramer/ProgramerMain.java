@@ -5,10 +5,14 @@
  */
 package museumapp.beaconprogramer;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URL;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,7 +24,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jssc.*;
+import org.apache.commons.lang.SystemUtils;
+import sun.misc.IOUtils;
 
 /**
  *
@@ -107,7 +115,7 @@ public class ProgramerMain {
     private static boolean ReadInData() {
         String selectSql = "SELECT * FROM EXHIBIT ";
 
-        try ( Statement statement = conn.createStatement();  ResultSet resultSet = statement.executeQuery(selectSql)) {
+        try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(selectSql)) {
 
             while (resultSet.next()) {
                 EList.add(new Exhibit(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3)));
@@ -118,7 +126,7 @@ public class ProgramerMain {
 
         selectSql = "SELECT * FROM BLUETOOTH";
 
-        try ( Statement statement = conn.createStatement();  ResultSet resultSet = statement.executeQuery(selectSql)) {
+        try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(selectSql)) {
 
             while (resultSet.next()) {
                 BList.add(new Bluetooth(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3)));
@@ -259,10 +267,6 @@ public class ProgramerMain {
             String isPython = "";
 
             System.out.println(isPython);
-//            IOUtils.copy(Runtime.getRuntime().exec("cmd python --version").getInputStream(), writer, "UTF-8");
-//
-//            String isPython = writer.toString();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -273,23 +277,73 @@ public class ProgramerMain {
     }
 
     private static boolean IsFirstTime() {
-        URL main = Main.class.getResource("Main.class");
-        File javaFile = new File(main.getPath());
-
-        String absolutePath = javaFile.getAbsolutePath();
-        String javaFileFolderPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
-        String txtFilePath = javaFileFolderPath + "\\wantedTxt.txt";
-
-        File txtFile = new File(txtFilePath);
-        if (txtFile.exists() && !txtFile.isDirectory()) return false; 
-        return true; 
+//        URL main = ProgramerMain.class.getResource("ProgramerMain.class");
+//        File javaFile = new File(main.getPath());
+//
+//        String absolutePath = javaFile.getAbsolutePath();
+//        String javaFileFolderPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+//        String txtFilePath = javaFileFolderPath + "\\wantedTxt.txt";
+//
+//        File txtFile = new File(txtFilePath);
+//        if (txtFile.exists() && !txtFile.isDirectory()) 
+        return false;
+        //return true; 
     }
 
     private static boolean SysCheck() {
-        System.getProperties().list(System.out);
-        if (!System.getProperty("os.name").equalsIgnoreCase("Windows 10")) {
+        if (!SystemUtils.IS_OS_WINDOWS) {
             return false;
         }
+        try {
+            //System.out.println(getProcessOutput("python --version"));
+            final String SYSPATH = getProcessOutput("path");
+            if (!SYSPATH.contains("Python38")) return false;
+            if (!SYSPATH.contains("Java\\jdk")) return false;
+            
+            System.out.println(getProcessOutput("pip3 show panda"));
+            System.out.println(getProcessOutput("pip3 show nrfutil"));
+        } catch (Exception ex) {
+            Logger.getLogger(ProgramerMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //System.getProperties().list(System.out);
         return true;
     }
+
+    public static String getProcessOutput(String in) throws IOException, InterruptedException {
+        Process pc = Runtime.getRuntime().exec("cmd");
+        //Thread out = new Thread(new SyncPipe(pc.getInputStream(), System.out));
+        PrintWriter pr = new PrintWriter(pc.getOutputStream());
+        pr.println(in);
+        pr.close();
+        pc.waitFor();
+        StringBuilder textBuilder = new StringBuilder();
+        try (Reader reader = new BufferedReader(new InputStreamReader(pc.getInputStream(), Charset.forName(StandardCharsets.UTF_8.name())))) {
+            int c = 0;
+            boolean find = false;
+            while ((c = reader.read()) != -1) {
+                if (c == 10) {
+                    if (!find) {
+                        if (textBuilder.toString().contains(in)) {
+                            textBuilder = new StringBuilder();
+                            find = true;
+                        }
+                    }
+                }
+                textBuilder.append((char) c);
+            }
+        }
+        pc.destroy();
+        if (textBuilder.length() > 0) {
+            int last, prev = textBuilder.length() - 1;
+            while ((last = textBuilder.lastIndexOf("\n", prev)) == prev) {
+                prev = last - 1;
+            }
+            if (last >= 0) {
+                textBuilder.delete(last, textBuilder.length());
+            }
+        }
+        return textBuilder.toString().trim();
+    }
+
 }
