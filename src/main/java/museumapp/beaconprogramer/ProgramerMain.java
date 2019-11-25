@@ -94,10 +94,10 @@ public class ProgramerMain {
 
         if (portNames.length == 0 || portNames.length > 1) {
             if (portNames.length == 0) {
-                System.out.println("Beacon not found...");
+                System.out.println("/nBeacon not found...");
             }
             if (portNames.length > 1) {
-                System.out.println("Multiple devices detected, you can only program one beacon at a time...");
+                System.out.println("/nMultiple devices detected, you can only program one beacon at a time...");
             }
             System.out.println("Press Enter to exit...");
             try {
@@ -166,7 +166,7 @@ public class ProgramerMain {
                     break;
                 }
             } while (b != null);
-            System.out.println("Beacon is named with" + b.getName() + " , please confirm. ----- YES/NO");
+            System.out.println("Beacon is named with " + b.getName() + " , please confirm. ----- YES/NO");
             confirm = sc.nextLine();
         } while (confirm.equalsIgnoreCase("no"));
 
@@ -193,6 +193,7 @@ public class ProgramerMain {
         cmd.add("cd " + MAKEFILE);
         cmd.add("rmdir /q /s _build");
         cmd.add("make");
+        cmd.add("xcopy s140_nrf52_7.0.1_softdevice.hex _build");
 
         RunCommand(cmd);
         ResetBeaconC(beacon);
@@ -225,22 +226,31 @@ public class ProgramerMain {
         }
     }
 
+    private static void ProgramBeacon(){
+        ArrayList<String> cmd = new ArrayList<String>();
+        cmd.add("cd " + MAKEFILE + "\\_build");
+        cmd.add("powershell");
+        cmd.add("nrfutil pkg generate --hw-version 52 --debug-mode --sd-req 0xCA --sd-id 0xCA --application .\\nrf52840_xxaa.hex --softdevice .\\s140_nrf52_7.0.1_softdevice.hex beacon.zip");
+        cmd.add("nrfutil dfu usb-serial -pkg beacon.zip -p " + BeaconPort + " -b 115200");
+        RunCommand(cmd);
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
 
-        if (!SysCheck() || IsFirstTime()) {
-            System.out.println("\n*************System Check **************"
-                    + "\n Please make sure you have following dependencies"
-                    + "\n gcc-arm-none-eabi"
-                    + "\n Python 2.7"
-                    + "\n nRF Util python package"
-                    + "\n nRF Command Line Tools"
-                    + "\n*******************************************");
-            System.exit(-1);
-        }
+//        if (!SysCheck() || IsFirstTime()) {
+//            System.out.println("\n*************System Check **************"
+//                    + "\n Please make sure you have following dependencies"
+//                    + "\n gcc-arm-none-eabi"
+//                    + "\n Python 2.7"
+//                    + "\n nRF Util python package"
+//                    + "\n nRF Command Line Tools"
+//                    + "\n*******************************************");
+//            System.exit(-1);
+//        }
 
         Database db = new Database();
 
@@ -250,28 +260,25 @@ public class ProgramerMain {
 
         BList = new ArrayList<Bluetooth>();
 
-//        if (!ReadInData()) {
-//            System.out.println("Failed to read from database");
-//            System.exit(-1);
-//        }
-//        System.out.println("All on record exhibits: ");
-//        for (Exhibit e : EList) {
-//            System.out.println(e.toString() + "\n");
-//        }
-//        
-//        Bluetooth beacon = NewBeacon();
-//        CompileBeaconC(beacon);
-//        setBeaconPort();
-        try {
-
-            String isPython = "";
-
-            System.out.println(isPython);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        if (!ReadInData()) {
+            System.out.println("Failed to read from database");
+            System.exit(-1);
         }
+        System.out.println("All on record exhibits: ");
+        for (Exhibit e : EList) {
+            System.out.println(e.toString() + "\n");
+        }
+        
+        Bluetooth beacon = NewBeacon();
+        CompileBeaconC(beacon);
+        setBeaconPort();
+        ProgramBeacon();
+        
+        System.out.println("Do you want to insert the beacon to the database? (Yes / No)");
+        
+        if(sc.nextLine().equalsIgnoreCase("yes"))
 
-        //InsertBluetooth(b);
+        InsertBluetooth(beacon);
         //nrfutil pkg generate --hw-version 52 --debug-mode --sd-req 0xCA --sd-id 0xCA --application .\nrf52840_xxaa.hex --softdevice .\s140_nrf52_7.0.1_softdevice.hex beacon.zip
         //nrfutil dfu usb-serial -pkg beacon.zip -p COM5 -b 115200
     }
