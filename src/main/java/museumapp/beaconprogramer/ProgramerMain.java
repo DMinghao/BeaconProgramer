@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.*;
 import org.apache.commons.lang.SystemUtils;
-import sun.misc.IOUtils;
+//import sun.misc.IOUtils;
 
 /**
  *
@@ -292,12 +292,13 @@ public class ProgramerMain {
 
     private static boolean SysCheck() {
         if (!SystemUtils.IS_OS_WINDOWS) {
+            System.err.println("This programer only runs on windows");
             return false;
         }
         try {
             //System.out.println(getProcessOutput("python --version"));
             final String SYSPATH = getProcessOutput("path");
-            if (!SYSPATH.contains("Python38")) return false;
+            if (!SYSPATH.contains("Python27")) return false;
             if (!SYSPATH.contains("Java\\jdk")) return false;
             
             System.out.println(getProcessOutput("pip3 show panda"));
