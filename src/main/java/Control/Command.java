@@ -63,10 +63,10 @@ public class Command {
 
         if (portNames.length == 0 || portNames.length > 1) {
             if (portNames.length == 0) {
-                System.out.println("/nBeacon not found...");
+                System.out.println("\nBeacon not found...");
             }
             if (portNames.length > 1) {
-                System.out.println("/nMultiple devices detected, you can only program one beacon at a time...");
+                System.out.println("\nMultiple devices detected, you can only program one beacon at a time...");
             }
             System.out.println("Press Enter to exit...");
             try {
@@ -89,7 +89,7 @@ public class Command {
         cmd.add("cd " + MAKEFILE);
         cmd.add("rmdir /q /s _build");
         cmd.add("make");
-        cmd.add("xcopy s140_nrf52_7.0.1_softdevice.hex _build");
+        cmd.add("copy s140_nrf52_7.0.1_softdevice.hex _build");
 
         RunCommand(cmd);
         ResetBeaconC(beacon);

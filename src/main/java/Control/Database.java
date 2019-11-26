@@ -31,7 +31,9 @@ public class Database {
     private static Scanner sc = new Scanner(System.in);
 
     public Database() {
-        this.conn = connect();
+    	EList = new ArrayList<Exhibit>(); 
+    	BList = new ArrayList<Bluetooth>();
+        conn = connect();
         if (!ReadInData()) {
             System.out.println("Failed to read from database");
             System.exit(-1);
