@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package museumapp.beaconprogramer;
+package Control;
 
+import Entity.SyncPipe;
 import Entity.Bluetooth;
 import java.io.IOException;
 import java.io.PrintWriter;
