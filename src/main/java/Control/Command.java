@@ -32,6 +32,11 @@ public class Command {
     private final static String BEACON_C_PATH = MAIN_PATH + "\\Beacon\\Workspace\\Projects\\ble_app_blinky\\main.c";
     private final static String MAKEFILE = MAIN_PATH + "\\Beacon\\Workspace\\Projects\\ble_app_blinky\\pca10059\\s140\\armgcc";
 
+    /**
+     * @apiNote A helper method that make a one time use printwriter that pipes cmd commands to system cmd
+     * @return A {@link PrintWriter PrintWriter} that prints command to system cmd
+     * @throws IOException 
+     */
     private static PrintWriter pw() throws IOException {
         try {
             p = Runtime.getRuntime().exec("cmd");
@@ -45,6 +50,10 @@ public class Command {
         return new PrintWriter(p.getOutputStream());
     }
 
+    /**
+     * @apiNote A helper method that takes in an arraylist of strings as cmd command and execute them in order
+     * @param input An arraylist of cmd command strings which will execute in the sequence of that arraylist 
+     */
     private static void RunCommand(ArrayList<String> input) {
         try {
             stdin = pw();
@@ -58,6 +67,11 @@ public class Command {
         }
     }
 
+    /**
+     * @apiNote This method will detect if any unprogrammed beacon is plugged in to the machine. 
+     * If there are more than one device is plugged in or no device is detected, the system will exit. 
+     * @return A {@link String Beacon Port string} that represented of which the beacon is inserted in
+     */
     public static String getBeaconPort() {
         String[] portNames = SerialPortList.getPortNames();
 
@@ -81,6 +95,11 @@ public class Command {
 
     }
 
+    /**
+     * @apiNote This method will take in a bluetooth object and call {@link NameBeacon(Bluetooth) NameBeacon}({@link Bluetooth Bluetooth}) to set the beacon name
+     *  then it will compile the C file for that beacon and reset the C file to its initial state by calling {@link ResetBeacon(Bluetooth) ResetBeacon}({@link Bluetooth Bluetooth})
+     * @param beacon A {@link Bluetooth Bluetooth} object
+     */
     public static void CompileBeaconC(Bluetooth beacon) {
         NameBeacon(beacon);
 
@@ -92,9 +111,13 @@ public class Command {
         cmd.add("copy s140_nrf52_7.0.1_softdevice.hex _build");
 
         RunCommand(cmd);
-        ResetBeaconC(beacon);
+        ResetBeacon(beacon);
     }
 
+    /**
+     * @apiNote A helper method that takes in a {@link Bluetooth Bluetooth} object to rename the beacon name in the C file 
+     * @param beacon A {@link Bluetooth Bluetooth} object 
+     */
     private static void NameBeacon(Bluetooth beacon) {
         try {
             Path path = Paths.get(BEACON_C_PATH);
@@ -107,7 +130,11 @@ public class Command {
         }
     }
 
-    private static void ResetBeaconC(Bluetooth beacon) {
+    /**
+     * @apiNote A helper method that takes in a {@link Bluetooth Bluetooth} object to reset the beacon name in the C file back to initial state
+     * @param beacon A {@link Bluetooth Bluetooth} object 
+     */
+    private static void ResetBeacon(Bluetooth beacon) {
         try {
             Path path = Paths.get(BEACON_C_PATH);
             Charset cset = StandardCharsets.UTF_8;
@@ -119,6 +146,11 @@ public class Command {
         }
     }
 
+    /**
+     * @Magic This is where the magic happens 
+     * @apiNote This method will utilize the nrfUtil python package to program the beacon on a designated port
+     * @param BeaconPort A {@link String string} that represents the port number of which the beacon has plugged in
+     */
     public static void ProgramBeacon(String BeaconPort) {
         ArrayList<String> cmd = new ArrayList<String>();
         cmd.add("cd " + MAKEFILE + "\\_build");

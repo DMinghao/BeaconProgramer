@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>MuseumApp</groupId>
     <artifactId>BeaconProgramer</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     
     <properties>
@@ -31,5 +31,15 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    <name>Advanced Beacon Programer</name>
+    <description>This is an advanced Bluetooth beacon programmer that allows the user to create a new Nodic® nRF52840 Bluetooth beacon. 
+
+This programmer will read all Exhibit and Bluetooth data from the remote database and prompt the user to prepare a new Bluetooth beacon by asking both the Exhibit ID that the beacon will link to as well as the name that the beacon should use. 
+
+To finalize the process, the programmer will compile the C file with the designate beacon name and configure the plugged in Nodic® nRF52840 USB Dongle with specially designed drives. </description>
+    <organization>
+    	<name>Shuyuan Inc. </name>
+    	<url>https://www.shuyuaninc.com/</url>
+    </organization>
 </project>
 
