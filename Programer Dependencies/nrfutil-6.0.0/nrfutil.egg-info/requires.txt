@@ -1,0 +1,15 @@
+click
+crcmod
+ecdsa
+intelhex
+libusb1
+pc_ble_driver_py>=0.14.0
+piccata
+protobuf
+pyserial
+pyspinel>=1.0.0a3
+pyyaml
+tqdm
+
+[:sys_platform == "win32"]
+antlib>=1.1b0
