@@ -38,7 +38,7 @@ This programmer will read all Exhibit and Bluetooth data from the remote databas
 
 To finalize the process, the programmer will compile the C file with the designate beacon name and configure the plugged in Nodic® nRF52840 USB Dongle with specially designed drives. </description>
     <organization>
-    	<name>Shuyuan Inc. </name>
+    	<name>Shuyuan Inc</name>
     	<url>https://www.shuyuaninc.com/</url>
     </organization>
 </project>
