@@ -35,12 +35,21 @@ public class Bluetooth {
     private String Name;
     private int ExID;
 
+    /**
+     *
+     * @param ID
+     * @param Name
+     * @param ExID
+     */
     public Bluetooth(int ID, String Name, int ExID) {
         this.ID = ID;
         this.Name = Name;
         this.ExID = ExID;
     }
 
+    /**
+     *
+     */
     public Bluetooth() {
     }
 

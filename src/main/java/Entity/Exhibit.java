@@ -34,12 +34,21 @@ public class Exhibit {
     private String Des;
     private int ScID;
 
+    /**
+     *
+     * @param ID
+     * @param Des
+     * @param ScID
+     */
     public Exhibit(int ID, String Des, int ScID) {
         this.ID = ID;
         this.Des = Des;
         this.ScID = ScID;
     }
 
+    /**
+     *
+     */
     public Exhibit() {
     }
 

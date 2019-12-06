@@ -38,7 +38,11 @@ public class SyncPipe implements Runnable{
     private final OutputStream ostrm_; 
     private final InputStream istrm_; 
     
-    
+    /**
+     *
+     * @param istrm
+     * @param ostrm
+     */
     public SyncPipe(InputStream istrm, OutputStream ostrm){
         this.istrm_ = istrm; 
         this.ostrm_ = ostrm; 
