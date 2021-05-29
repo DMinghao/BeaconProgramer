@@ -47,7 +47,7 @@ public class Exhibit {
     }
 
     /**
-     *
+     * Default constructor
      */
     public Exhibit() {
     }

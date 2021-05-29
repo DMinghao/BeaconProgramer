@@ -48,7 +48,7 @@ public class Bluetooth {
     }
 
     /**
-     *
+     * Default constructor
      */
     public Bluetooth() {
     }
